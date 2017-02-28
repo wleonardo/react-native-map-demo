@@ -8,6 +8,10 @@ import React, { Component, PropTypes } from 'react';
 
 import MapView from 'react-native-maps';
 
+import PriceMarker from './PriceMarker';
+
+import SelfMarker from './selfMarker.js';
+
 import {
   AppRegistry,
   StyleSheet,
@@ -22,23 +26,22 @@ import {
 
 export default class Home extends Component {
   constructor(props) {
-      super(props);
-      this.state = { latitude: -26, longitude: 28 , markerList: []};
-      console.log(this.props);
-      console.log(MapView);
+    super(props);
+    this.state = { latitude: -26, longitude: 28, markerList: [], bikes: [] };
+    console.log(this.props);
+    console.log(MapView);
   }
 
   getGeo() {
     navigator.geolocation.getCurrentPosition(
       (position) => {
         var lastPosition = JSON.stringify(position);
-        this.setState({lastPosition});
-        this.setState({longitude: position.coords.longitude});
-        this.setState({latitude: position.coords.latitude});
+        this.setState({ lastPosition });
+        this.setState({ longitude: position.coords.longitude });
+        this.setState({ latitude: position.coords.latitude });
         this.addMaker()
       },
-      (error) => alert(error.message),
-      {enableHighAccuracy: true, maximumAge: 0, distanceFilter: 1}
+      (error) => alert(error.message), { enableHighAccuracy: true, maximumAge: 0, distanceFilter: 1 }
     );
   }
 
@@ -47,35 +50,59 @@ export default class Home extends Component {
     this.watchID = navigator.geolocation.watchPosition((position) => {
       console.log(position);
       var lastPosition = JSON.stringify(position);
-      this.setState({lastPosition});
-      this.setState({longitude: position.coords.longitude});
-      this.setState({latitude: position.coords.latitude});
+      this.setState({ lastPosition });
+      this.setState({ longitude: position.coords.longitude });
+      this.setState({ latitude: position.coords.latitude });
       this.addMaker()
-    },()=>{
+      this.refeshBike(position.coords.longitude, position.coords.latitude)
+    }, () => {
 
-    },{enableHighAccuracy: true, maximumAge: 0, distanceFilter: 1});
+    }, { enableHighAccuracy: true, maximumAge: 0, distanceFilter: 1 });
+  }
+
+  getRandom() {
+    var random = Math.random();
+    return random > 0.5 ? random : 0 - random;
+  }
+
+  refeshBike(longitude, latitude) {
+    var bikes = [];
+    for (var i = 0; i < 10; i++) {
+
+      var coordinate = {
+        longitude: longitude + this.getRandom() / 1000,
+        latitude: latitude + this.getRandom() / 1000
+      }
+      var bikeInfo = {
+        coordinate: coordinate
+      }
+
+      bikes.push(bikeInfo);
+    }
+    this.setState({ bikes: bikes });
+    console.log(bikes);
   }
 
   _pressButton() {
-        const { navigator } = this.props;
-        if(navigator) {
-            //很熟悉吧，入栈出栈~ 把当前的页面pop掉，这里就返回到了上一个页面:FirstPageComponent了
-            navigator.pop();
-        }
-   }
-   addMaker() {
+    const { navigator } = this.props;
+    if (navigator) {
+      //很熟悉吧，入栈出栈~ 把当前的页面pop掉，这里就返回到了上一个页面:FirstPageComponent了
+      navigator.pop();
+    }
+  }
+  addMaker() {
     console.log(parseFloat(this.state.longitude))
     console.log(parseFloat(this.state.latitude))
     var mapList = JSON.parse(JSON.stringify(this.state.markerList));
 
     mapList.push({
-        longitude: parseFloat(this.state.longitude),
-        latitude: parseFloat(this.state.latitude)
-      })
+      longitude: parseFloat(this.state.longitude),
+      latitude: parseFloat(this.state.latitude)
+    })
     console.log(mapList);
-    this.setState({markerList: mapList})
-    // console.log(this.state.markerList);
-   }
+    this.setState({ markerList: mapList })
+      // console.log(this.state.markerList);
+  }
 
   render() {
     return (
@@ -83,7 +110,39 @@ export default class Home extends Component {
       <StatusBar
      backgroundColor="blue"
      barStyle="light-content"/>
-      <TouchableOpacity onPress={this._pressButton.bind(this)}>
+      <MapView style={styles.map}
+        region={{
+          latitude: this.state.latitude,
+          longitude: this.state.longitude,
+          latitudeDelta: 0.0003,
+          longitudeDelta: 0.0003,
+        }}
+      >
+      {this.state.bikes.map(bike => (
+
+          <MapView.Marker coordinate={bike.coordinate} >
+            <PriceMarker amount={99} />
+          </MapView.Marker>
+      ))}
+      <MapView.Marker
+        coordinate={this.state.markerList[0] ? this.state.markerList[0] : {}}
+        title="开始"
+        description="开始"
+        ></MapView.Marker>
+
+      <MapView.Marker coordinate={{longitude: this.state.longitude, latitude: this.state.latitude}} >
+          <SelfMarker amount={99} />
+      </MapView.Marker>
+
+      <MapView.Polyline
+        coordinates={this.state.markerList}
+        strokeColor="rgba(0,0,200,0.5)"
+        strokeWidth={1}
+      />
+    
+
+      </MapView>
+      <TouchableOpacity onPress={this._pressButton.bind(this)} style={{marginTop:50}}>
           <Text>点我跳回去</Text>
       </TouchableOpacity>
       <Text style={{marginTop:100}}>
@@ -95,32 +154,7 @@ export default class Home extends Component {
         </Text>
       <Text>{this.state.longitude}</Text>
       <Text>{this.state.latitude}</Text>
-      <MapView style={styles.map}
-        region={{
-          latitude: this.state.latitude,
-          longitude: this.state.longitude,
-          latitudeDelta: 0.0003,
-          longitudeDelta: 0.0003,
-        }}
-      >
-      <MapView.Marker
-        coordinate={this.state.markerList[0] ? this.state.markerList[0] : {}}
-        title="开始"
-        description="开始"
-        ></MapView.Marker>
-      <MapView.Marker
-        coordinate={this.state.markerList[this.state.markerList.length - 1] ? this.state.markerList[this.state.markerList.length - 1] : {}}
-        title="当前位置"
-        description="当前位置"
-        ></MapView.Marker>
-      <MapView.Polyline
-        coordinates={this.state.markerList}
-        strokeColor="rgba(0,0,200,0.5)"
-        strokeWidth={1}
-      />
-
-
-      </MapView>
+      <Text>{this.state.bikes.length}</Text>
       </View>
     );
   }
@@ -128,8 +162,14 @@ export default class Home extends Component {
 
 const styles = StyleSheet.create({
   containerMain: {
-    marginTop: 50,
-    height: 600
+    marginTop: 0,
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    paddingLeft: 30,
+    paddingRight: 30
   },
   button: {
     fontSize: 30,
@@ -154,7 +194,7 @@ const styles = StyleSheet.create({
   },
   map: {
     position: 'absolute',
-    top: 200,
+    top: 0,
     left: 0,
     right: 0,
     bottom: 0,
