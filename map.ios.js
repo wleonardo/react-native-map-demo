@@ -12,6 +12,8 @@ import PriceMarker from './PriceMarker';
 
 import SelfMarker from './selfMarker.js';
 
+import PositionButton from './PositionButton.js';
+
 import {
   AppRegistry,
   StyleSheet,
@@ -21,43 +23,85 @@ import {
   StatusBar,
   Button,
   TextInput,
-  TouchableOpacity
+  TouchableOpacity,
+  Animated
 } from 'react-native';
+
+// import {
+//   Accelerometer,
+//   Gyroscope,
+//   Magnetometer
+// } from 'NativeModules';
+const LATITUDE = 37.78825;
+const LONGITUDE = -122.4324;
+const LATITUDE_DELTA = 0.0003;
+const LONGITUDE_DELTA = 0.0003;
+
 
 export default class Home extends Component {
   constructor(props) {
     super(props);
-    this.state = { latitude: -26, longitude: 28, markerList: [], bikes: [] };
-    console.log(this.props);
-    console.log(MapView);
+    this.state = {
+      coordinate: {
+        latitude: LATITUDE,
+        longitude: LONGITUDE,
+        latitudeDelta: LATITUDE_DELTA,
+        longitudeDelta: LONGITUDE_DELTA,
+      },
+      // region: new MapView.AnimatedRegion({
+      //   latitude: LATITUDE,
+      //   longitude: LONGITUDE,
+      //   latitudeDelta: LATITUDE_DELTA,
+      //   longitudeDelta: LONGITUDE_DELTA,
+      // }),
+      markerList: [],
+      bikes: [],
+      clickFlag: 0.98
+    };
+    alert('e12e21');
   }
+
 
   getGeo() {
     navigator.geolocation.getCurrentPosition(
       (position) => {
-        var lastPosition = JSON.stringify(position);
-        this.setState({ lastPosition });
-        this.setState({ longitude: position.coords.longitude });
-        this.setState({ latitude: position.coords.latitude });
+
+        var lastPosition = {
+          latitude: position.coords.latitude,
+          longitude: position.coords.longitude
+        };
+        this.setState({ coordinate: lastPosition });
+
+        // this.setState({ coordinate: { latitude: position.coords.latitude, longitude: position.coords.longitude } });
+        // this.setState({ longitude: position.coords.longitude });
+
         this.addMaker()
+        this.refeshBike(position.coords.longitude, position.coords.latitude);
       },
       (error) => alert(error.message), { enableHighAccuracy: true, maximumAge: 0, distanceFilter: 1 }
     );
   }
 
-  componentDidMount() {
+  refeshPosition() {
+    this.setState({ clickFlag: this.getRandom() })
     this.getGeo();
-    this.watchID = navigator.geolocation.watchPosition((position) => {
-      console.log(position);
-      var lastPosition = JSON.stringify(position);
-      this.setState({ lastPosition });
-      this.setState({ longitude: position.coords.longitude });
-      this.setState({ latitude: position.coords.latitude });
-      this.addMaker()
-      this.refeshBike(position.coords.longitude, position.coords.latitude)
-    }, () => {
+  }
 
-    }, { enableHighAccuracy: true, maximumAge: 0, distanceFilter: 1 });
+  componentDidMount() {
+    const { coordinate } = this.state;
+    // coordinate = JSON.parse(coordinate);
+    // coordinate.stopAnimation();
+    //this.getGeo();
+    // this.watchID = navigator.geolocation.watchPosition((position) => {
+    //   var lastPosition = JSON.stringify(position);
+    //   this.setState({ lastPosition });
+    //   this.setState({ longitude: position.coords.longitude });
+    //   this.setState({ latitude: position.coords.latitude });
+    //   this.addMaker()
+    //   this.refeshBike(position.coords.longitude, position.coords.latitude)
+    // }, () => {
+
+    // }, { enableHighAccuracy: true, maximumAge: 0, distanceFilter: 1 });
   }
 
   getRandom() {
@@ -80,7 +124,6 @@ export default class Home extends Component {
       bikes.push(bikeInfo);
     }
     this.setState({ bikes: bikes });
-    console.log(bikes);
   }
 
   _pressButton() {
@@ -91,17 +134,12 @@ export default class Home extends Component {
     }
   }
   addMaker() {
-    console.log(parseFloat(this.state.longitude))
-    console.log(parseFloat(this.state.latitude))
     var mapList = JSON.parse(JSON.stringify(this.state.markerList));
-
-    mapList.push({
-      longitude: parseFloat(this.state.longitude),
-      latitude: parseFloat(this.state.latitude)
-    })
-    console.log(mapList);
+    mapList.push(this.state.coordinate)
     this.setState({ markerList: mapList })
-      // console.log(this.state.markerList);
+  }
+  onRegionChange() {
+    alert(123);
   }
 
   render() {
@@ -110,13 +148,9 @@ export default class Home extends Component {
       <StatusBar
      backgroundColor="blue"
      barStyle="light-content"/>
-      <MapView style={styles.map}
-        region={{
-          latitude: this.state.latitude,
-          longitude: this.state.longitude,
-          latitudeDelta: 0.0003,
-          longitudeDelta: 0.0003,
-        }}
+      <MapView.Animated style={styles.map}
+        region={this.state.coordinate}
+        onRegionChange={this.onRegionChange}
       >
       {this.state.bikes.map(bike => (
 
@@ -130,9 +164,9 @@ export default class Home extends Component {
         description="开始"
         ></MapView.Marker>
 
-      <MapView.Marker coordinate={{longitude: this.state.longitude, latitude: this.state.latitude}} >
+      <MapView.Marker.Animated coordinate={this.state.coordinate} >
           <SelfMarker amount={99} />
-      </MapView.Marker>
+      </MapView.Marker.Animated>
 
       <MapView.Polyline
         coordinates={this.state.markerList}
@@ -141,20 +175,25 @@ export default class Home extends Component {
       />
     
 
-      </MapView>
+      </MapView.Animated>
       <TouchableOpacity onPress={this._pressButton.bind(this)} style={{marginTop:50}}>
           <Text>点我跳回去</Text>
       </TouchableOpacity>
       <Text style={{marginTop:100}}>
           <Text style={styles.title}></Text>
           <Text style={styles.title}>经度: </Text>
-          {this.state.longitude}
+          {this.state.coordinate.longitude}
           <Text style={styles.title}>维度: </Text>
-          {this.state.latitude}
+          {this.state.coordinate.latitude}
         </Text>
       <Text>{this.state.longitude}</Text>
       <Text>{this.state.latitude}</Text>
-      <Text>{this.state.bikes.length}</Text>
+      <Text>{this.state.clickFlag}</Text>
+
+       <TouchableOpacity onPress={this.refeshPosition.bind(this)} style={{position: 'absolute', bottom: 30, left: 30}}>
+          <Text>lalala</Text>
+      </TouchableOpacity>
+      
       </View>
     );
   }
