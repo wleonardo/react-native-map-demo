@@ -38,6 +38,7 @@
 		5E9157361DD0AC6A00FF2AA8 /* libRCTAnimation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E9157331DD0AC6500FF2AA8 /* libRCTAnimation.a */; };
 		699F54A4B8E964D7121FE4BC /* libPods-reactNativeDemo.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C3B9E0F0285DAAAB655C7A9B /* libPods-reactNativeDemo.a */; settings = {ATTRIBUTES = (Required, ); }; };
 		832341BD1AAA6AB300B99B32 /* libRCTText.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 832341B51AAA6A8300B99B32 /* libRCTText.a */; };
+		A7A1CBCB1E67D76800B02A20 /* libreact-native-camera.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A7A1CBCA1E67D76800B02A20 /* libreact-native-camera.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -267,6 +268,7 @@
 		5E91572D1DD0AC6500FF2AA8 /* RCTAnimation.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTAnimation.xcodeproj; path = "../node_modules/react-native/Libraries/NativeAnimation/RCTAnimation.xcodeproj"; sourceTree = "<group>"; };
 		78C398B01ACF4ADC00677621 /* RCTLinking.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTLinking.xcodeproj; path = "../node_modules/react-native/Libraries/LinkingIOS/RCTLinking.xcodeproj"; sourceTree = "<group>"; };
 		832341B01AAA6A8300B99B32 /* RCTText.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTText.xcodeproj; path = "../node_modules/react-native/Libraries/Text/RCTText.xcodeproj"; sourceTree = "<group>"; };
+		A7A1CBCA1E67D76800B02A20 /* libreact-native-camera.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libreact-native-camera.a"; path = "../../../Library/Developer/Xcode/DerivedData/reactNativeDemo-delneqyqxdtguyhiipdsrdkidpzo/Build/Products/Debug-iphoneos/react-native-camera/libreact-native-camera.a"; sourceTree = "<group>"; };
 		C3B9E0F0285DAAAB655C7A9B /* libPods-reactNativeDemo.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-reactNativeDemo.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		F631F726BD254AC1A3D5F52F /* AirMaps.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = AirMaps.xcodeproj; path = "../node_modules/react-native-maps/ios/AirMaps.xcodeproj"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -284,6 +286,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A7A1CBCB1E67D76800B02A20 /* libreact-native-camera.a in Frameworks */,
 				146834051AC3E58100842450 /* libReact.a in Frameworks */,
 				5E9157361DD0AC6A00FF2AA8 /* libRCTAnimation.a in Frameworks */,
 				00C302E51ABCBA2D00DB3ED1 /* libRCTActionSheet.a in Frameworks */,
@@ -522,6 +525,7 @@
 		DB8B021BF38F0884A0C64114 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				A7A1CBCA1E67D76800B02A20 /* libreact-native-camera.a */,
 				C3B9E0F0285DAAAB655C7A9B /* libPods-reactNativeDemo.a */,
 			);
 			name = Frameworks;

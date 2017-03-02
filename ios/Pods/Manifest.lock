@@ -1,4 +1,8 @@
 PODS:
+  - React (0.41.2):
+    - React/Core (= 0.41.2)
+  - react-native-camera (0.6.0):
+    - React
   - React/Core (0.41.2):
     - React/cxxreact
     - React/yoga
@@ -29,6 +33,7 @@ PODS:
   - React/yoga (0.41.2)
 
 DEPENDENCIES:
+  - react-native-camera (from `../node_modules/react-native-camera`)
   - React/Core (from `../node_modules/react-native`)
   - React/RCTActionSheet (from `../node_modules/react-native`)
   - React/RCTAnimation (from `../node_modules/react-native`)
@@ -44,10 +49,13 @@ DEPENDENCIES:
 EXTERNAL SOURCES:
   React:
     :path: ../node_modules/react-native
+  react-native-camera:
+    :path: ../node_modules/react-native-camera
 
 SPEC CHECKSUMS:
   React: 2b10c07d947dea71c144a33764e9162ed81e3825
+  react-native-camera: 6e634dde115c0f272ea7049c20367bb8030eb8a1
 
-PODFILE CHECKSUM: b43bc33d330e267475ef41ae41cfd2fd29924677
+PODFILE CHECKSUM: 56eb255a05e3d1af8645cb00bb3963e1ba59f40b
 
 COCOAPODS: 1.2.0

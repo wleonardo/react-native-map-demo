@@ -15,5 +15,5 @@ target 'reactNativeDemo' do
     'RCTVibration',
     'RCTWebSocket'
   ]
-
+  pod 'react-native-camera', path: '../node_modules/react-native-camera'
 end
