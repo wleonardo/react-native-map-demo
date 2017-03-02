@@ -6,21 +6,17 @@ import {
 } from 'react-native';
 
 const propTypes = {
-  amount: PropTypes.number.isRequired,
-  fontSize: PropTypes.number,
+  amount: PropTypes.number.isRequired
 };
 
-const defaultProps = {
-  fontSize: 13,
-};
 
 class PriceMarker extends React.Component {
   render() {
-    const { fontSize, amount } = this.props;
+    const { amount } = this.props;
     return (
       <View style={styles.container}>
         <View style={styles.bubble}>
-          <Text style={[styles.amount, { fontSize }]}>${amount}</Text>
+          <Text style={[styles.amount]}>${amount}</Text>
         </View>
         <View style={styles.arrowBorder} />
         <View style={styles.arrow} />
@@ -30,7 +26,6 @@ class PriceMarker extends React.Component {
 }
 
 PriceMarker.propTypes = propTypes;
-PriceMarker.defaultProps = defaultProps;
 
 const styles = StyleSheet.create({
   container: {

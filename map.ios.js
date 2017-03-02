@@ -34,9 +34,33 @@ import {
 // } from 'NativeModules';
 const LATITUDE = 37.78825;
 const LONGITUDE = -122.4324;
-const LATITUDE_DELTA = 0.0003;
-const LONGITUDE_DELTA = 0.0003;
+const EARTH_RADIUS = 6378137;
+var LATITUDE_DELTA = 0.0003;
+var LONGITUDE_DELTA = 0.0003;
 
+var refeshBikeTimer;
+
+var firstTime = true;
+
+var rad = function(d) {
+  return d * Math.PI / 180;
+}
+
+var getDistance = function(p1, p2) {
+  var radLat1 = rad(p1.latitude);
+  var radLat2 = rad(p2.latitude);
+  var a = radLat1 - radLat2;
+  var b = rad(p1.longitude) - rad(p2.longitude);
+  var s = 2 * Math.asin(Math.sqrt(Math.pow(Math.sin(a / 2), 2) + Math.cos(radLat1) * Math.cos(radLat2) * Math.pow(Math.sin(b / 2), 2)));
+  s = s * EARTH_RADIUS;
+  s = Math.round(s * 10000) / 10000;
+  return s;
+}
+
+var getRandom = function() {
+  var random = Math.random();
+  return random > 0.5 ? random : 0 - random;
+}
 
 export default class Home extends Component {
   constructor(props) {
@@ -48,50 +72,22 @@ export default class Home extends Component {
         latitudeDelta: LATITUDE_DELTA,
         longitudeDelta: LONGITUDE_DELTA,
       },
-      // region: new MapView.AnimatedRegion({
-      //   latitude: LATITUDE,
-      //   longitude: LONGITUDE,
-      //   latitudeDelta: LATITUDE_DELTA,
-      //   longitudeDelta: LONGITUDE_DELTA,
-      // }),
+      region: {
+        latitude: LATITUDE,
+        longitude: LONGITUDE,
+        latitudeDelta: LATITUDE_DELTA,
+        longitudeDelta: LONGITUDE_DELTA,
+      },
       markerList: [],
       bikes: [],
       clickFlag: 0.98
     };
-    alert('e12e21');
   }
 
-
-  getGeo() {
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-
-        var lastPosition = {
-          latitude: position.coords.latitude,
-          longitude: position.coords.longitude
-        };
-        this.setState({ coordinate: lastPosition });
-
-        // this.setState({ coordinate: { latitude: position.coords.latitude, longitude: position.coords.longitude } });
-        // this.setState({ longitude: position.coords.longitude });
-
-        this.addMaker()
-        this.refeshBike(position.coords.longitude, position.coords.latitude);
-      },
-      (error) => alert(error.message), { enableHighAccuracy: true, maximumAge: 0, distanceFilter: 1 }
-    );
-  }
-
-  refeshPosition() {
-    this.setState({ clickFlag: this.getRandom() })
-    this.getGeo();
-  }
 
   componentDidMount() {
-    const { coordinate } = this.state;
-    // coordinate = JSON.parse(coordinate);
-    // coordinate.stopAnimation();
-    //this.getGeo();
+    firstTime = true;
+    this.getGeo();
     // this.watchID = navigator.geolocation.watchPosition((position) => {
     //   var lastPosition = JSON.stringify(position);
     //   this.setState({ lastPosition });
@@ -104,25 +100,65 @@ export default class Home extends Component {
     // }, { enableHighAccuracy: true, maximumAge: 0, distanceFilter: 1 });
   }
 
-  getRandom() {
-    var random = Math.random();
-    return random > 0.5 ? random : 0 - random;
+
+  getGeo() {
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        var lastPosition = {
+          latitude: position.coords.latitude,
+          longitude: position.coords.longitude,
+          latitudeDelta: LATITUDE_DELTA,
+          longitudeDelta: LONGITUDE_DELTA
+        };
+
+        if (firstTime) {
+          this.refeshBike(lastPosition.longitude, lastPosition.latitude);
+          this.setState({ coordinate: lastPosition, region: lastPosition });
+          setTimeout(function(){
+            firstTime = false;
+          }, 0);
+          
+        } else {
+          this.setState({ coordinate: lastPosition });
+        }
+
+        // this.addMaker()
+      },
+      (error) => alert(error.message), { enableHighAccuracy: true, maximumAge: 0, distanceFilter: 1 }
+    );
+  }
+
+
+
+  getBackToPosition() {
+    var coordinate = JSON.parse(JSON.stringify(this.state.coordinate));
+    coordinate.latitudeDelta = 0.0003;
+    coordinate.longitudeDelta = 0.0003;
+    this.refeshBike(coordinate.longitude, coordinate.latitude);
+    this.setState({ region: coordinate })
   }
 
   refeshBike(longitude, latitude) {
     var bikes = [];
+    longitude = longitude || this.state.region.longitude;
+    latitude = latitude || this.state.region.latitude;
+
     for (var i = 0; i < 10; i++) {
 
       var coordinate = {
-        longitude: longitude + this.getRandom() / 1000,
-        latitude: latitude + this.getRandom() / 1000
+        longitude: longitude + getRandom() / 1000,
+        latitude: latitude + getRandom() / 1000
       }
       var bikeInfo = {
-        coordinate: coordinate
+        coordinate: coordinate,
+        distance: getDistance(coordinate, this.state.region).toString()
       }
 
+
       bikes.push(bikeInfo);
+
     }
+
     this.setState({ bikes: bikes });
   }
 
@@ -138,8 +174,16 @@ export default class Home extends Component {
     mapList.push(this.state.coordinate)
     this.setState({ markerList: mapList })
   }
-  onRegionChange() {
-    alert(123);
+  onRegionChange(data) {
+    if (!firstTime) {
+      LATITUDE_DELTA = data.latitudeDelta;
+      LONGITUDE_DELTA = data.longitudeDelta;
+      this.setState({ region: data });
+      refeshBikeTimer && clearTimeout(refeshBikeTimer);
+      refeshBikeTimer = setTimeout(function() {
+        this.refeshBike();
+      }.bind(this), 300);
+    }
   }
 
   render() {
@@ -149,24 +193,26 @@ export default class Home extends Component {
      backgroundColor="blue"
      barStyle="light-content"/>
       <MapView.Animated style={styles.map}
-        region={this.state.coordinate}
-        onRegionChange={this.onRegionChange}
+        region={this.state.region}
+        onRegionChange={this.onRegionChange.bind(this)}
       >
       {this.state.bikes.map(bike => (
-
-          <MapView.Marker coordinate={bike.coordinate} >
-            <PriceMarker amount={99} />
-          </MapView.Marker>
+          <MapView.Marker.Animated coordinate={bike.coordinate} title="可用" description={'车辆距您'+ bike.distance + '米'} >
+            <PriceMarker amount={1} />
+          </MapView.Marker.Animated>
       ))}
-      <MapView.Marker
-        coordinate={this.state.markerList[0] ? this.state.markerList[0] : {}}
-        title="开始"
-        description="开始"
-        ></MapView.Marker>
 
-      <MapView.Marker.Animated coordinate={this.state.coordinate} >
+
+      <MapView.Marker.Animated 
+      coordinate={this.state.coordinate} >
           <SelfMarker amount={99} />
       </MapView.Marker.Animated>
+
+      <MapView.Marker.Animated
+        coordinate={this.state.region}
+        title="当前位置"
+        description="当前位置"
+        ></MapView.Marker.Animated>
 
       <MapView.Polyline
         coordinates={this.state.markerList}
@@ -179,19 +225,9 @@ export default class Home extends Component {
       <TouchableOpacity onPress={this._pressButton.bind(this)} style={{marginTop:50}}>
           <Text>点我跳回去</Text>
       </TouchableOpacity>
-      <Text style={{marginTop:100}}>
-          <Text style={styles.title}></Text>
-          <Text style={styles.title}>经度: </Text>
-          {this.state.coordinate.longitude}
-          <Text style={styles.title}>维度: </Text>
-          {this.state.coordinate.latitude}
-        </Text>
-      <Text>{this.state.longitude}</Text>
-      <Text>{this.state.latitude}</Text>
-      <Text>{this.state.clickFlag}</Text>
 
-       <TouchableOpacity onPress={this.refeshPosition.bind(this)} style={{position: 'absolute', bottom: 30, left: 30}}>
-          <Text>lalala</Text>
+       <TouchableOpacity onPress={this.getBackToPosition.bind(this)} style={{position: 'absolute', bottom: 30, left: 30}}>
+          <Text>回到定位</Text>
       </TouchableOpacity>
       
       </View>
@@ -219,7 +255,6 @@ const styles = StyleSheet.create({
   },
   input: {
     textAlign: 'center',
-    color: '#333333',
     marginBottom: 5,
   },
   container: {

@@ -6,21 +6,16 @@ import {
 } from 'react-native';
 
 const propTypes = {
-  amount: PropTypes.number.isRequired,
-  fontSize: PropTypes.number,
-};
-
-const defaultProps = {
-  fontSize: 13,
+  amount: PropTypes.number.isRequired
 };
 
 class SelfMarker extends React.Component {
   render() {
-    const { fontSize, amount } = this.props;
+    const { amount } = this.props;
     return (
       <View style={styles.container}>
         <View style={styles.bubble}>
-          <View style={[styles.amount, { fontSize }]}></View>
+          <View style={[styles.amount]}></View>
         </View>
       </View>
     );
@@ -28,7 +23,6 @@ class SelfMarker extends React.Component {
 }
 
 SelfMarker.propTypes = propTypes;
-SelfMarker.defaultProps = defaultProps;
 
 const styles = StyleSheet.create({
   container: {
@@ -49,19 +43,18 @@ const styles = StyleSheet.create({
     borderColor: '#fff',
     borderWidth: 0.5,
   },
-  dollar: {
-    color: '#FFFFFF',
-    fontSize: 10,
-  },
   amount: {
-    color: '#FFFFFF',
-    fontSize: 13,
     width: 20,
     height: 20,
     borderRadius: 23,
     lineHeight: 45,
     textAlign: 'center',
     backgroundColor: '#2E7FFF'
+  },
+
+  dollar: {
+    color: '#FFFFFF',
+    fontSize: 10,
   },
   arrow: {
     backgroundColor: 'transparent',

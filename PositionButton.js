@@ -9,9 +9,6 @@ const propTypes = {
   fontSize: PropTypes.number,
 };
 
-const defaultProps = {
-  fontSize: 13,
-};
 
 class PositionButton extends React.Component {
   render() {
@@ -29,7 +26,6 @@ class PositionButton extends React.Component {
 }
 
 PositionButton.propTypes = propTypes;
-PositionButton.defaultProps = defaultProps;
 
 const styles = StyleSheet.create({
   container: {
