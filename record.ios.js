@@ -41,8 +41,6 @@ const EARTH_RADIUS = 6378137;
 var LATITUDE_DELTA = 0.0003;
 var LONGITUDE_DELTA = 0.0003;
 
-var refeshBikeTimer;
-
 var firstTime = true;
 
 var rad = function(d) {
@@ -118,7 +116,6 @@ export default class Home extends Component {
         };
 
         if (firstTime) {
-          this.refeshBike(lastPosition.longitude, lastPosition.latitude);
           this.setState({ coordinate: lastPosition, region: lastPosition });
           setTimeout(function() {
             firstTime = false;
@@ -140,32 +137,7 @@ export default class Home extends Component {
     var coordinate = JSON.parse(JSON.stringify(this.state.coordinate));
     coordinate.latitudeDelta = 0.0003;
     coordinate.longitudeDelta = 0.0003;
-    this.refeshBike(coordinate.longitude, coordinate.latitude);
     this.setState({ region: coordinate })
-  }
-
-  refeshBike(longitude, latitude) {
-    var bikes = [];
-    longitude = longitude || this.state.region.longitude;
-    latitude = latitude || this.state.region.latitude;
-
-    for (var i = 0; i < 10; i++) {
-
-      var coordinate = {
-        longitude: longitude + getRandom() / 1000,
-        latitude: latitude + getRandom() / 1000
-      }
-      var bikeInfo = {
-        coordinate: coordinate,
-        distance: getDistance(coordinate, this.state.region).toString()
-      }
-
-
-      bikes.push(bikeInfo);
-
-    }
-
-    this.setState({ bikes: bikes });
   }
 
   addMaker() {
@@ -178,10 +150,6 @@ export default class Home extends Component {
       LATITUDE_DELTA = data.latitudeDelta;
       LONGITUDE_DELTA = data.longitudeDelta;
       this.setState({ region: data });
-      refeshBikeTimer && clearTimeout(refeshBikeTimer);
-      refeshBikeTimer = setTimeout(function() {
-        this.refeshBike();
-      }.bind(this), 300);
     }
   }
 
@@ -209,12 +177,6 @@ export default class Home extends Component {
         region={this.state.region}
         onRegionChange={this.onRegionChange.bind(this)}
       >
-      {this.state.bikes.map(bike => (
-          <MapView.Marker.Animated coordinate={bike.coordinate} title="可用" description={'车辆距您'+ bike.distance + '米'} >
-            <PriceMarker amount={1} />
-          </MapView.Marker.Animated>
-      ))}
-
 
       <MapView.Marker.Animated 
       coordinate={this.state.coordinate} >
@@ -235,10 +197,6 @@ export default class Home extends Component {
     
 
       </MapView.Animated>
-
-      <TouchableOpacity onPress={this.barcodeSanner.bind(this)} style={styles.scannerBtn}>
-          <Text style={styles.scannerBtnText}>扫描</Text>
-      </TouchableOpacity>
 
       <TouchableOpacity  onPress={this.getBackToPosition.bind(this)} style={styles.positionBtn}>
         <View  style={styles.positionBtnIner}>

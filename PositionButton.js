@@ -3,24 +3,24 @@ import {
   StyleSheet,
   View,
   Text,
+  TouchableOpacity
 } from 'react-native';
 
 const propTypes = {
   fontSize: PropTypes.number,
 };
 
-
 class PositionButton extends React.Component {
   render() {
     const { fontSize } = this.props;
     return (
-      <View style={styles.container}>
+      <TouchableOpacity style={styles.container}>
         <View style={styles.bubble}>
           <View style={[styles.amount, { fontSize }]}>
             <View style={styles.point}></View>
           </View>
         </View>
-      </View>
+      </TouchableOpacity>
     );
   }
 }

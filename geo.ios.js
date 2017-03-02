@@ -17,6 +17,8 @@ import {
 
 import Camera from 'react-native-camera';
 
+import RecordPage from './record.ios.js';
+
 var loading = false;
 
 export default class BadInstagramCloneApp extends Component {
@@ -31,7 +33,9 @@ export default class BadInstagramCloneApp extends Component {
       navigator.pop();
     }
   }
-  componentDidMount() {}
+  componentDidMount() {
+    loading = false;
+  }
 
   takePicture() {
     this.camera.capture()
@@ -41,10 +45,12 @@ export default class BadInstagramCloneApp extends Component {
 
   getBarCode(data) {
     if (!loading && data) {
-      console.log(data.data);
       loading = true;
       const { navigator } = this.props;
-      navigator.pop();
+        navigator.resetTo({
+          name: 'recordPage',
+          component: RecordPage
+        });
     }
   }
 
