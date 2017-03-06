@@ -22,11 +22,7 @@ import {
 
 import MapView from 'react-native-maps';
 
-import PriceMarker from './PriceMarker';
-
-import SelfMarker from './selfMarker.js';
-
-import PositionButton from './PositionButton.js';
+import PointMarker from './point.ios.js';
 
 import GeoPage from './geo.ios.js';
 
@@ -40,8 +36,6 @@ const LONGITUDE = -122.4324;
 const EARTH_RADIUS = 6378137;
 var LATITUDE_DELTA = 0.0003;
 var LONGITUDE_DELTA = 0.0003;
-
-var firstTime = true;
 
 var rad = function(d) {
   return d * Math.PI / 180;
@@ -63,6 +57,10 @@ var getRandom = function() {
   return random > 0.5 ? random : 0 - random;
 }
 
+var getTime = function() {
+  return (new Date()).getTime();
+}
+
 export default class Home extends Component {
 
   constructor(props) {
@@ -74,34 +72,49 @@ export default class Home extends Component {
         latitudeDelta: LATITUDE_DELTA,
         longitudeDelta: LONGITUDE_DELTA,
       },
-      region: {
-        latitude: LATITUDE,
-        longitude: LONGITUDE,
-        latitudeDelta: LATITUDE_DELTA,
-        longitudeDelta: LONGITUDE_DELTA,
-      },
       markerList: [],
       bikes: [],
-      barcode: null
+      barcode: null,
+      startTime: 0,
+      duration: 0,
+      distance: 0
     };
+  }
+
+  refreshDuration() {
+    setTimeout(function() {
+      var duration = getTime() - this.state.startTime;
+      this.setState({ duration: duration });
+      this.refreshDuration.call(this);
+    }.bind(this), 1000)
   }
 
 
   componentDidMount() {
-    const { navigator } = this.props;
-    console.log(this.props);
-    firstTime = true;
+    this.setState({ startTime: getTime() })
     this.getGeo();
-    // this.watchID = navigator.geolocation.watchPosition((position) => {
-    //   var lastPosition = JSON.stringify(position);
-    //   this.setState({ lastPosition });
-    //   this.setState({ longitude: position.coords.longitude });
-    //   this.setState({ latitude: position.coords.latitude });
-    //   this.addMaker()
-    //   this.refeshBike(position.coords.longitude, position.coords.latitude)
-    // }, () => {
+    this.refreshDuration.call(this);
+    this.watchID = navigator.geolocation.watchPosition((position) => {
+      var lastPosition = {
+        latitude: position.coords.latitude,
+        longitude: position.coords.longitude,
+        latitudeDelta: LATITUDE_DELTA,
+        longitudeDelta: LONGITUDE_DELTA
+      };
 
-    // }, { enableHighAccuracy: true, maximumAge: 0, distanceFilter: 1 });
+      if (this.state.markerList.length) {
+        var distance = getDistance(lastPosition, this.state.markerList[this.state.markerList.length - 1]);
+        if (distance > 20) {
+          this.setState({ lastPosition: lastPosition, distance: this.state.distance + distance });
+          this.addMaker(lastPosition);
+        }
+      }
+
+
+
+    }, () => {
+
+    }, { enableHighAccuracy: true, maximumAge: 0, distanceFilter: 1 });
   }
 
 
@@ -115,17 +128,8 @@ export default class Home extends Component {
           longitudeDelta: LONGITUDE_DELTA
         };
 
-        if (firstTime) {
-          this.setState({ coordinate: lastPosition, region: lastPosition });
-          setTimeout(function() {
-            firstTime = false;
-          }, 0);
-
-        } else {
-          this.setState({ coordinate: lastPosition });
-        }
-
-        // this.addMaker()
+        this.setState({ coordinate: lastPosition });
+        this.addMaker(lastPosition)
       },
       (error) => alert(error.message), { enableHighAccuracy: true, maximumAge: 0, distanceFilter: 1 }
     );
@@ -134,37 +138,16 @@ export default class Home extends Component {
 
 
   getBackToPosition() {
-    var coordinate = JSON.parse(JSON.stringify(this.state.coordinate));
-    coordinate.latitudeDelta = 0.0003;
-    coordinate.longitudeDelta = 0.0003;
-    this.setState({ region: coordinate })
+    // var coordinate = JSON.parse(JSON.stringify(this.state.coordinate));
+    // coordinate.latitudeDelta = 0.0003;
+    // coordinate.longitudeDelta = 0.0003;
+    // this.setState({ region: coordinate })
   }
 
-  addMaker() {
+  addMaker(position) {
     var mapList = JSON.parse(JSON.stringify(this.state.markerList));
-    mapList.push(this.state.coordinate)
+    mapList.push(position)
     this.setState({ markerList: mapList })
-  }
-  onRegionChange(data) {
-    if (!firstTime) {
-      LATITUDE_DELTA = data.latitudeDelta;
-      LONGITUDE_DELTA = data.longitudeDelta;
-      this.setState({ region: data });
-    }
-  }
-
-  barcodeSanner() {
-    let _this = this;
-    const { navigator } = this.props;
-    //为什么这里可以取得 props.navigator?请看上文:
-    //<Component {...route.params} navigator={navigator} />
-    //这里传递了navigator作为props
-    if (navigator) {
-      navigator.push({
-        name: 'GeoPage',
-        component: GeoPage
-      });
-    }
   }
 
   render() {
@@ -174,35 +157,48 @@ export default class Home extends Component {
      backgroundColor="blue"
      barStyle="light-content"/>
       <MapView.Animated style={styles.map}
-        region={this.state.region}
-        onRegionChange={this.onRegionChange.bind(this)}
+        region={this.state.coordinate}
       >
 
-      <MapView.Marker.Animated 
-      coordinate={this.state.coordinate} >
-          <SelfMarker amount={99} />
+       <MapView.Marker.Animated coordinate={this.state.coordinate} >
+          <PointMarker amount={'起'} />
       </MapView.Marker.Animated>
-
-      <MapView.Marker.Animated
-        coordinate={this.state.region}
-        title="当前位置"
-        description="当前位置"
-        ></MapView.Marker.Animated>
 
       <MapView.Polyline
         coordinates={this.state.markerList}
-        strokeColor="rgba(0,0,200,0.5)"
-        strokeWidth={1}
-      />
+        strokeColor="rgba(255,90,95,10)"
+        strokeWidth={3}
+      ></MapView.Polyline>
+
+      <MapView.Marker.Animated coordinate={this.state.markerList[this.state.markerList.length - 1]} >
+          <PointMarker amount={'终'} />
+      </MapView.Marker.Animated>
     
-
+      <Text>{this.state.startTime}</Text>
+      <Text>{this.state.distance}</Text>
       </MapView.Animated>
-
-      <TouchableOpacity  onPress={this.getBackToPosition.bind(this)} style={styles.positionBtn}>
-        <View  style={styles.positionBtnIner}>
-          <View style={styles.positionBtnInerpoint}></View>
+      <View  style={styles.panel}>
+        <Text style={{marginBottom: 20, color: '#c0c0c0'}}>157****9293</Text>
+        <Text style={{marginBottom: 10, color: '#FF5A5F', fontSize: 30}}>{this.state.distance.toFixed(1)}</Text>
+        <Text style={{marginBottom: 20, color: '#FF5A5F'}}>骑行距离(m)</Text>
+        <View style={styles.subPannel}>
+          <View style={styles.subPannelDetail}>
+            <Text style={styles.subPannelDetailTitle}>{Math.ceil(this.state.duration / 60000)}</Text>
+            <Text style={styles.subPannelDetailInfo}>骑行时间(min)</Text>
+          </View>
+          <View style={styles.subPannelDetail}>
+            <Text style={styles.subPannelDetailTitle}>{Math.ceil(this.state.distance * 0.12)}</Text>
+            <Text style={styles.subPannelDetailInfo}>节约炭排量(g)</Text>
+          </View>
+          <View style={styles.subPannelDetail}>
+            <Text style={styles.subPannelDetailTitle}>{Math.ceil(this.state.distance * 0.02)}</Text>
+            <Text style={styles.subPannelDetailInfo}>卡路里(kCal)</Text>
+          </View>
         </View>
-      </TouchableOpacity>
+      </View>
+      
+
+
       </View>
     );
   }
@@ -236,6 +232,39 @@ const styles = StyleSheet.create({
   input: {
     textAlign: 'center',
     marginBottom: 5,
+  },
+  panel: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    bottom: 0,
+    height: 230,
+    backgroundColor: '#fff',
+    textAlign: 'center',
+    flex: 1,
+    alignItems: 'center',
+    padding: 10
+  },
+  subPannel: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    paddingLeft: 20,
+    paddingRight: 20
+  },
+  subPannelDetail: {
+    textAlign: 'center',
+    color: '#c0c0c0',
+    paddingLeft: 10,
+    paddingRight: 10
+  },
+  subPannelDetailTitle: {
+    textAlign: 'center',
+    color: '#606060',
+    fontSize: 20
+  },
+  subPannelDetailInfo: {
+    textAlign: 'center',
+    color: '#c0c0c0',
   },
   positionBtn: {
     flex: 1,

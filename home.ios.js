@@ -16,6 +16,7 @@ import {
   Button,
   TextInput,
   TouchableOpacity,
+  TouchableHighlight,
   Animated,
   Dimensions
 } from 'react-native';
@@ -84,7 +85,8 @@ export default class Home extends Component {
       },
       markerList: [],
       bikes: [],
-      barcode: null
+      barcode: null,
+      title: 'Bike'
     };
   }
 
@@ -203,8 +205,14 @@ export default class Home extends Component {
     return (
       <View style={styles.containerMain}>
       <StatusBar
-     backgroundColor="blue"
-     barStyle="light-content"/>
+      backgroundColor="blue"
+      barStyle="default" ></StatusBar>
+     <View style={styles.navigator}>  
+     <TouchableHighlight onPress={this._onForward}>
+          <Text>Tap me to load the next scene</Text>
+        </TouchableHighlight>
+        <Text>{ this.state.title }</Text>
+      </View>
       <MapView.Animated style={styles.map}
         region={this.state.region}
         onRegionChange={this.onRegionChange.bind(this)}
@@ -256,6 +264,14 @@ const styles = StyleSheet.create({
   },
   map: {
     flex: 1
+  },
+  navigator: {
+    height: 100,
+    top: 30,
+    backgroundColor: '#ccc',
+    left: 0,
+    right: 0,
+    paddingTop: 10
   },
   scannerBtn: {
     position: 'absolute',
