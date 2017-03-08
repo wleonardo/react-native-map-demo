@@ -16,4 +16,5 @@ target 'reactNativeDemo' do
     'RCTWebSocket'
   ]
   pod 'react-native-camera', path: '../node_modules/react-native-camera'
+  pod 'RNVectorIcons', :path => '../node_modules/react-native-vector-icons'
 end

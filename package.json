@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "start": "react-native run-ios --device",
+    "android": "react-native run-android",
     "test": "jest"
   },
   "dependencies": {
@@ -13,7 +14,8 @@
     "react-native": "0.41.2",
     "react-native-camera": "^0.6.0",
     "react-native-maps": "0.13.0",
-    "react-native-motion-manager": "^0.0.6"
+    "react-native-motion-manager": "^0.0.6",
+    "react-native-vector-icons": "^4.0.0"
   },
   "devDependencies": {
     "babel-jest": "18.0.0",

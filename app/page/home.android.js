@@ -21,19 +21,19 @@ import {
   Dimensions
 } from 'react-native';
 
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+// import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import MapView from 'react-native-maps';
 
-import PriceMarker from './PriceMarker';
+// import PriceMarker from './PriceMarker';
 
-import SelfMarker from './selfMarker.js';
+// import SelfMarker from './selfMarker.js';
 
-import PositionButton from './PositionButton.js';
+// import PositionButton from './PositionButton.js';
 
-import GeoPage from './geo.ios.js';
+// import GeoPage from './geo.ios.js';
 
-import Mycenter from './my-center.ios.js';
+// import Mycenter from './my-center.ios.js';
 
 // import {
 //   Accelerometer,
@@ -123,6 +123,8 @@ export default class Home extends Component {
           longitudeDelta: LONGITUDE_DELTA
         };
 
+        alert(lastPosition);
+
         if (firstTime) {
           this.refeshBike(lastPosition.longitude, lastPosition.latitude);
           this.setState({ coordinate: lastPosition, region: lastPosition });
@@ -133,10 +135,8 @@ export default class Home extends Component {
         } else {
           this.setState({ coordinate: lastPosition });
         }
-
-        // this.addMaker()
       },
-      (error) => alert(error.message), { enableHighAccuracy: true, maximumAge: 0, distanceFilter: 1 }
+      (error) => alert(error.message), { enableHighAccuracy: false, maximumAge: 0, distanceFilter: 10, timeout: 20000 }
     );
   }
 
@@ -218,55 +218,19 @@ export default class Home extends Component {
   render() {
     return (
       <View style={styles.containerMain}>
-      <StatusBar
-      backgroundColor="blue"
-      barStyle="default" ></StatusBar>
-      <View style={styles.navigator}>  
-        <Text style={{textAlign: 'center', color: '#FF5A5F', fontSize: 18, fontWeight: '500'}}>{ this.state.title }</Text>
-        <TouchableHighlight onPress={this.gotoMyCenter.bind(this)} style={{position: 'absolute', left: 15, top: 5}}>
-          <Icon name="account" size={30} color="#c0c0c0" />
-        </TouchableHighlight>
-      </View>
-      <MapView.Animated style={styles.map}
-        region={this.state.region}
-        onRegionChange={this.onRegionChange.bind(this)}
-      >
-      {this.state.bikes.map(bike => (
-          <MapView.Marker.Animated coordinate={bike.coordinate} title="可用" description={'车辆距您'+ bike.distance + '米'} >
-            <PriceMarker amount={1} />
-          </MapView.Marker.Animated>
-      ))}
-
-
-      <MapView.Marker.Animated 
-      coordinate={this.state.coordinate} >
-          <SelfMarker amount={99} />
-      </MapView.Marker.Animated>
-
-      <MapView.Marker.Animated
-        coordinate={this.state.region}
-        title="当前位置"
-        description="当前位置"
-        ></MapView.Marker.Animated>
-
-      <MapView.Polyline
-        coordinates={this.state.markerList}
-        strokeColor="rgba(0,0,200,0.5)"
-        strokeWidth={1}
-      />
-    
-
-      </MapView.Animated>
-
-      <TouchableOpacity onPress={this.barcodeSanner.bind(this)} style={styles.scannerBtn}>
-          <Text style={styles.scannerBtnText}>扫描</Text>
-      </TouchableOpacity>
-
-      <TouchableOpacity  onPress={this.getBackToPosition.bind(this)} style={styles.positionBtn}>
-        <View  style={styles.positionBtnIner}>
-          <View style={styles.positionBtnInerpoint}></View>
+        <StatusBar
+        barStyle="default" ></StatusBar>
+        <View style={styles.navigator}>  
+          <Text style={{textAlign: 'center', color: '#FF5A5F', fontSize: 18, fontWeight: '500'}}>{this.state.title}</Text>
         </View>
-      </TouchableOpacity>
+         <MapView.Animated style={styles.map}
+          initialRegion={{
+            latitude: 37.78825,
+            longitude: -122.4324,
+            latitudeDelta: 0.0922,
+            longitudeDelta: 0.0421,
+          }}
+        ></MapView.Animated>
       </View>
     );
   }
@@ -277,11 +241,11 @@ const styles = StyleSheet.create({
     flex: 1
   },
   map: {
-    flex: 1
+    flex: 1,
   },
   navigator: {
-    height: 80,
-    top: 30,
+    height: 50,
+    top: 0,
     backgroundColor: '#fff',
     left: 0,
     right: 0,
