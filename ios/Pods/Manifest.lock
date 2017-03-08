@@ -1,4 +1,9 @@
 PODS:
+  - GoogleMaps (2.2.0):
+    - GoogleMaps/Maps (= 2.2.0)
+  - GoogleMaps/Base (2.2.0)
+  - GoogleMaps/Maps (2.2.0):
+    - GoogleMaps/Base
   - React (0.41.2):
     - React/Core (= 0.41.2)
   - react-native-camera (0.6.0):
@@ -35,6 +40,7 @@ PODS:
     - React
 
 DEPENDENCIES:
+  - GoogleMaps
   - react-native-camera (from `../node_modules/react-native-camera`)
   - React/Core (from `../node_modules/react-native`)
   - React/RCTActionSheet (from `../node_modules/react-native`)
@@ -58,10 +64,11 @@ EXTERNAL SOURCES:
     :path: ../node_modules/react-native-vector-icons
 
 SPEC CHECKSUMS:
+  GoogleMaps: 104c418d61ab8a05dff06ed0784c25ea9d37da45
   React: 2b10c07d947dea71c144a33764e9162ed81e3825
   react-native-camera: 6e634dde115c0f272ea7049c20367bb8030eb8a1
   RNVectorIcons: d7e2c5eef986d1f594dfd2947df6d6e8093ad1e0
 
-PODFILE CHECKSUM: a0e977a0cdfe9d3556df6c2e35baf7c5b16c19d1
+PODFILE CHECKSUM: 625c2f7ced1e00ec7c8c2a433d6ee26f1f39b921
 
 COCOAPODS: 1.2.0

@@ -23,7 +23,7 @@ import {
 
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
-import MapView from 'react-native-maps';
+import MapView, { PROVIDER_GOOGLE } from 'react-native-maps';
 
 import PriceMarker from './PriceMarker';
 
@@ -229,6 +229,7 @@ export default class Home extends Component {
       </View>
       <MapView.Animated style={styles.map}
         region={this.state.region}
+        provider={PROVIDER_GOOGLE}
         onRegionChange={this.onRegionChange.bind(this)}
       >
       {this.state.bikes.map(bike => (
