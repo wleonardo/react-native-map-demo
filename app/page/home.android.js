@@ -27,7 +27,7 @@ import MapView from 'react-native-maps';
 
 // import PriceMarker from './PriceMarker';
 
-// import SelfMarker from './selfMarker.js';
+import SelfMarker from '../../selfMarker.js';
 
 // import PositionButton from './PositionButton.js';
 
@@ -136,7 +136,7 @@ export default class Home extends Component {
           this.setState({ coordinate: lastPosition });
         }
       },
-      (error) => alert(error.message), { enableHighAccuracy: false, maximumAge: 0, distanceFilter: 10, timeout: 20000 }
+      (error) => alert(error.message), { enableHighAccuracy: false, maximumAge: 0, timeout: 20000 }
     );
   }
 
@@ -224,13 +224,13 @@ export default class Home extends Component {
           <Text style={{textAlign: 'center', color: '#FF5A5F', fontSize: 18, fontWeight: '500'}}>{this.state.title}</Text>
         </View>
          <MapView.Animated style={styles.map}
-          initialRegion={{
-            latitude: 37.78825,
-            longitude: -122.4324,
-            latitudeDelta: 0.0922,
-            longitudeDelta: 0.0421,
-          }}
-        ></MapView.Animated>
+          Region={this.state.coordinate}
+        >
+          <MapView.Marker.Animated 
+          coordinate={this.state.coordinate} >
+              <SelfMarker amount={99} />
+          </MapView.Marker.Animated>
+        </MapView.Animated>
       </View>
     );
   }

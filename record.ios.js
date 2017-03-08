@@ -20,7 +20,7 @@ import {
   Dimensions
 } from 'react-native';
 
-import MapView from 'react-native-maps';
+import MapView, { PROVIDER_GOOGLE } from 'react-native-maps';
 
 import PointMarker from './point.ios.js';
 
@@ -36,6 +36,7 @@ const LONGITUDE = -122.4324;
 const EARTH_RADIUS = 6378137;
 var LATITUDE_DELTA = 0.0003;
 var LONGITUDE_DELTA = 0.0003;
+var refeshBikeTimer;
 
 var rad = function(d) {
   return d * Math.PI / 180;
@@ -101,6 +102,7 @@ export default class Home extends Component {
         latitudeDelta: LATITUDE_DELTA,
         longitudeDelta: LONGITUDE_DELTA
       };
+      alert('new')
 
       if (this.state.markerList.length) {
         var distance = getDistance(lastPosition, this.state.markerList[this.state.markerList.length - 1]);
@@ -131,7 +133,7 @@ export default class Home extends Component {
         this.setState({ coordinate: lastPosition });
         this.addMaker(lastPosition)
       },
-      (error) => alert(error.message), { enableHighAccuracy: true, maximumAge: 0, distanceFilter: 1 }
+      (error) => alert(error.message), { enableHighAccuracy: true, maximumAge: 0 }
     );
   }
 
@@ -142,6 +144,21 @@ export default class Home extends Component {
     // coordinate.latitudeDelta = 0.0003;
     // coordinate.longitudeDelta = 0.0003;
     // this.setState({ region: coordinate })
+  }
+
+  onRegionChange(data) {
+    refeshBikeTimer && clearTimeout(refeshBikeTimer);
+    refeshBikeTimer = setTimeout(function() {
+      LATITUDE_DELTA = data.latitudeDelta;
+      LONGITUDE_DELTA = data.longitudeDelta;
+      var lastPosition = {
+        latitude: this.state.coordinate.latitude,
+        longitude: this.state.coordinate.longitude,
+        latitudeDelta: LATITUDE_DELTA,
+        longitudeDelta: LONGITUDE_DELTA
+      };
+      this.setState({ coordinate: lastPosition });
+    }.bind(this), 300);
   }
 
   addMaker(position) {
@@ -157,7 +174,9 @@ export default class Home extends Component {
      backgroundColor="blue"
      barStyle="light-content"/>
       <MapView.Animated style={styles.map}
+        provider={PROVIDER_GOOGLE}
         region={this.state.coordinate}
+        onRegionChange={this.onRegionChange.bind(this)}
       >
 
        <MapView.Marker.Animated coordinate={this.state.coordinate} >

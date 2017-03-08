@@ -181,11 +181,11 @@ export default class Home extends Component {
   }
   onRegionChange(data) {
     if (!firstTime) {
-      LATITUDE_DELTA = data.latitudeDelta;
-      LONGITUDE_DELTA = data.longitudeDelta;
-      this.setState({ region: data });
       refeshBikeTimer && clearTimeout(refeshBikeTimer);
       refeshBikeTimer = setTimeout(function() {
+        LATITUDE_DELTA = data.latitudeDelta;
+        LONGITUDE_DELTA = data.longitudeDelta;
+        this.setState({ region: data });
         this.refeshBike();
       }.bind(this), 300);
     }
@@ -227,7 +227,7 @@ export default class Home extends Component {
           <Icon name="account" size={30} color="#c0c0c0" />
         </TouchableHighlight>
       </View>
-      <MapView.Animated style={styles.map}
+      <MapView style={styles.map}
         region={this.state.region}
         provider={PROVIDER_GOOGLE}
         onRegionChange={this.onRegionChange.bind(this)}
@@ -257,7 +257,7 @@ export default class Home extends Component {
       />
     
 
-      </MapView.Animated>
+      </MapView>
 
       <TouchableOpacity onPress={this.barcodeSanner.bind(this)} style={styles.scannerBtn}>
           <Text style={styles.scannerBtnText}>扫描</Text>
