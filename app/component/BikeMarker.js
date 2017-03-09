@@ -10,7 +10,7 @@ const propTypes = {
 };
 
 
-class PriceMarker extends React.Component {
+class BikeMarker extends React.Component {
   render() {
     const { amount } = this.props;
     return (
@@ -25,7 +25,7 @@ class PriceMarker extends React.Component {
   }
 }
 
-PriceMarker.propTypes = propTypes;
+BikeMarker.propTypes = propTypes;
 
 const styles = StyleSheet.create({
   container: {
@@ -35,12 +35,12 @@ const styles = StyleSheet.create({
   bubble: {
     flex: 0,
     flexDirection: 'row',
-    width: 50,
-    height: 50,
+    width: 30,
+    height: 30,
     alignSelf: 'flex-start',
     backgroundColor: '#FF5A5F',
     padding: 2,
-    borderRadius: 25,
+    borderRadius: 15,
     borderColor: '#D23F44',
     borderWidth: 0.5,
   },
@@ -51,10 +51,10 @@ const styles = StyleSheet.create({
   amount: {
     color: '#FFFFFF',
     fontSize: 13,
-    width: 46,
-    height: 46,
-    borderRadius: 23,
-    lineHeight: 45,
+    width: 26,
+    height: 26,
+    borderRadius: 13,
+    lineHeight: 25,
     textAlign: 'center',
     backgroundColor: 'transparent'
   },
@@ -76,4 +76,4 @@ const styles = StyleSheet.create({
   },
 });
 
-module.exports = PriceMarker;
+module.exports = BikeMarker;

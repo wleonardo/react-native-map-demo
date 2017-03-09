@@ -25,21 +25,20 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import MapView, { PROVIDER_GOOGLE } from 'react-native-maps';
 
-import PriceMarker from './PriceMarker';
+import BikeMarker from '../component/BikeMarker.js';
 
-import SelfMarker from './selfMarker.js';
+import SelfMarker from '../component/selfMarker.js';
 
-import PositionButton from './PositionButton.js';
+import PositionButton from '../component/PositionButton.js';
 
-import GeoPage from './geo.ios.js';
+import ScannerPage from './scanner.ios.js';
+
+import RecordPage from './record.ios.js';
 
 import Mycenter from './my-center.ios.js';
 
-// import {
-//   Accelerometer,
-//   Gyroscope,
-//   Magnetometer
-// } from 'NativeModules';
+import AnimateDemo from './animate-demo.js';
+
 const LATITUDE = 37.78825;
 const LONGITUDE = -122.4324;
 const EARTH_RADIUS = 6378137;
@@ -88,53 +87,82 @@ export default class Home extends Component {
         longitudeDelta: LONGITUDE_DELTA,
       },
       markerList: [],
+      directions: [],
       bikes: [],
       barcode: null,
-      title: 'Bike'
+      title: 'Bike',
+      fadeInOpacity: new Animated.Value(0)
     };
+  }
+
+  refeshGeoLocation(position) {
+    var lastPosition = {
+      latitude: position.coords.latitude,
+      longitude: position.coords.longitude,
+      latitudeDelta: LATITUDE_DELTA,
+      longitudeDelta: LONGITUDE_DELTA
+    };
+
+    if (firstTime) {
+      this.refeshBike(lastPosition.longitude, lastPosition.latitude);
+      this.setState({ coordinate: lastPosition, region: lastPosition });
+      setTimeout(function() {
+        firstTime = false;
+      }, 0);
+    } else {
+      this.setState({ coordinate: lastPosition });
+    }
   }
 
 
   componentDidMount() {
     const { navigator } = this.props;
-    console.log(this.props);
     firstTime = true;
-    this.getGeo();
-    // this.watchID = navigator.geolocation.watchPosition((position) => {
-    //   var lastPosition = JSON.stringify(position);
-    //   this.setState({ lastPosition });
-    //   this.setState({ longitude: position.coords.longitude });
-    //   this.setState({ latitude: position.coords.latitude });
-    //   this.addMaker()
-    //   this.refeshBike(position.coords.longitude, position.coords.latitude)
-    // }, () => {
+    this.getGeo.call(this);
+    this.watchGeo.call(this);
+  }
 
-    // }, { enableHighAccuracy: true, maximumAge: 0, distanceFilter: 1 });
+  toBike(bikeinfo) {
+    return function() {
+      console.log(bikeinfo)
+      var region = this.state.region;
+      var url = 'https://maps.googleapis.com/maps/api/directions/json?origin=' + region.latitude + ',' + region.longitude + '&destination=' + bikeinfo.coordinate.latitude + ',' + bikeinfo.coordinate.longitude + '&mode=walking&key=AIzaSyAehxV6fSgrs6xDCH-2l-yElYW0OUekOwA';
+      fetch(url).then((response) => response.json())
+        .then((responseJson) => {
+          var directions = [];
+          var routes = responseJson.routes[0].legs[0];
+          directions.push(routes.start_location);
+          routes.steps.forEach(function(v) {
+            directions.push(v.start_location);
+            directions.push(v.end_location);
+          })
+          directions.push(routes.end_location);
+          console.log(directions);
+          directions.forEach(function(v, k) {
+            directions[k].latitude = v.lat;
+            directions[k].longitude = v.lng;
+          });
+
+          this.setState({ directions, directions });
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    }.bind(this);
+  }
+
+  watchGeo() {
+    navigator.geolocation.watchPosition((position) => {
+      this.refeshGeoLocation.call(this, position)
+    }, () => {}, { enableHighAccuracy: true, maximumAge: 0, distanceFilter: 1 });
   }
 
 
   getGeo() {
+    console.log(navigator.geolocation);
     navigator.geolocation.getCurrentPosition(
       (position) => {
-        var lastPosition = {
-          latitude: position.coords.latitude,
-          longitude: position.coords.longitude,
-          latitudeDelta: LATITUDE_DELTA,
-          longitudeDelta: LONGITUDE_DELTA
-        };
-
-        if (firstTime) {
-          this.refeshBike(lastPosition.longitude, lastPosition.latitude);
-          this.setState({ coordinate: lastPosition, region: lastPosition });
-          setTimeout(function() {
-            firstTime = false;
-          }, 0);
-
-        } else {
-          this.setState({ coordinate: lastPosition });
-        }
-
-        // this.addMaker()
+        this.refeshGeoLocation.call(this, position)
       },
       (error) => alert(error.message), { enableHighAccuracy: true, maximumAge: 0, distanceFilter: 1 }
     );
@@ -198,8 +226,8 @@ export default class Home extends Component {
     //这里传递了navigator作为props
     if (navigator) {
       navigator.push({
-        name: 'GeoPage',
-        component: GeoPage
+        name: 'RecordPage',
+        component: RecordPage
       });
     }
   }
@@ -215,17 +243,34 @@ export default class Home extends Component {
     }
   }
 
+  gotoAnimateDemo() {
+    const { navigator } = this.props;
+
+    if (navigator) {
+      navigator.push({
+        name: 'AnimateDemo',
+        component: AnimateDemo
+      });
+    }
+  }
+
   render() {
     return (
       <View style={styles.containerMain}>
       <StatusBar
       backgroundColor="blue"
       barStyle="default" ></StatusBar>
+
+
       <View style={styles.navigator}>  
         <Text style={{textAlign: 'center', color: '#FF5A5F', fontSize: 18, fontWeight: '500'}}>{ this.state.title }</Text>
         <TouchableHighlight onPress={this.gotoMyCenter.bind(this)} style={{position: 'absolute', left: 15, top: 5}}>
           <Icon name="account" size={30} color="#c0c0c0" />
         </TouchableHighlight>
+        <TouchableHighlight onPress={this.gotoAnimateDemo.bind(this)} style={{position: 'absolute', right: 15, top: 5}}>
+          <Icon name="candycane" size={30} color="#c0c0c0" />
+        </TouchableHighlight>
+        
       </View>
       <MapView style={styles.map}
         region={this.state.region}
@@ -233,8 +278,8 @@ export default class Home extends Component {
         onRegionChange={this.onRegionChange.bind(this)}
       >
       {this.state.bikes.map(bike => (
-          <MapView.Marker.Animated coordinate={bike.coordinate} title="可用" description={'车辆距您'+ bike.distance + '米'} >
-            <PriceMarker amount={1} />
+          <MapView.Marker.Animated onPress={this.toBike.call(this, bike)} coordinate={bike.coordinate} title="可用" description={'车辆距您'+ bike.distance + '米'} >
+            <BikeMarker amount={1} />
           </MapView.Marker.Animated>
       ))}
 
@@ -251,12 +296,11 @@ export default class Home extends Component {
         ></MapView.Marker.Animated>
 
       <MapView.Polyline
-        coordinates={this.state.markerList}
-        strokeColor="rgba(0,0,200,0.5)"
-        strokeWidth={1}
-      />
-    
-
+        coordinates={this.state.directions}
+        strokeColor="rgba(0,0,200,0.3)"
+        strokeWidth={2}
+      ></MapView.Polyline>
+      
       </MapView>
 
       <TouchableOpacity onPress={this.barcodeSanner.bind(this)} style={styles.scannerBtn}>

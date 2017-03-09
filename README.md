@@ -9,3 +9,8 @@
 真机调试
 
 `react-native run-ios --device`
+
+
+##### google地图导航api
+
+`https://developers.google.com/maps/documentation/directions/intro#DirectionsResponses`

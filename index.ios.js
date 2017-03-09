@@ -16,7 +16,7 @@ import {
   Navigator
 } from 'react-native';
 
-import Home from './home.ios.js';
+import Home from './app/page/home.ios.js';
 
 export default class reactNativeDemo extends Component {
  static defaultProps = {

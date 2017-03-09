@@ -22,9 +22,7 @@ import {
 
 import MapView, { PROVIDER_GOOGLE } from 'react-native-maps';
 
-import PointMarker from './point.ios.js';
-
-import GeoPage from './geo.ios.js';
+import PointMarker from '../component/point.ios.js';
 
 // import {
 //   Accelerometer,
@@ -93,30 +91,53 @@ export default class Home extends Component {
 
   componentDidMount() {
     this.setState({ startTime: getTime() })
-    this.getGeo();
+    this.getGeo.call(this);
     this.refreshDuration.call(this);
-    this.watchID = navigator.geolocation.watchPosition((position) => {
+    this.watchGeo.call(this);
+  }
+
+  watchGeo() {
+    navigator.geolocation.watchPosition((position) => {
       var lastPosition = {
         latitude: position.coords.latitude,
         longitude: position.coords.longitude,
         latitudeDelta: LATITUDE_DELTA,
         longitudeDelta: LONGITUDE_DELTA
       };
-      alert('new')
 
       if (this.state.markerList.length) {
+        // this.isValidPosition.call(this, lastPosition).then(function(position) {
+        //   console.log(position);
+        // }).catch(function(error){
+        //   console.log(error);
+        // })
         var distance = getDistance(lastPosition, this.state.markerList[this.state.markerList.length - 1]);
         if (distance > 20) {
           this.setState({ lastPosition: lastPosition, distance: this.state.distance + distance });
           this.addMaker(lastPosition);
         }
       }
-
-
-
     }, () => {
 
-    }, { enableHighAccuracy: true, maximumAge: 0, distanceFilter: 1 });
+    }, { enableHighAccuracy: false, maximumAge: 0});
+  }
+
+  isValidPosition(position) {
+    return new Promise(function(resolve, reject) {
+      navigator.geolocation.getCurrentPosition(
+        (newPosition) => {
+          if (getDistance(newPosition, position) < 20) {
+            resolve(position)
+          }else{
+            reject(false);
+          }
+        },
+        (error) => {
+          alert(error.message)
+        }, { enableHighAccuracy: true, maximumAge: 0 }
+      )
+    });
+
   }
 
 
@@ -193,8 +214,6 @@ export default class Home extends Component {
           <PointMarker amount={'终'} />
       </MapView.Marker.Animated>
     
-      <Text>{this.state.startTime}</Text>
-      <Text>{this.state.distance}</Text>
       </MapView.Animated>
       <View  style={styles.panel}>
         <Text style={{marginBottom: 20, color: '#c0c0c0'}}>157****9293</Text>
