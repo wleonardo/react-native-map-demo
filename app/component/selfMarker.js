@@ -26,6 +26,7 @@ SelfMarker.propTypes = propTypes;
 
 const styles = StyleSheet.create({
   container: {
+    backgroundColor: '#ccc',
     flexDirection: 'column',
     alignSelf: 'flex-start',
   },
@@ -47,7 +48,6 @@ const styles = StyleSheet.create({
     width: 20,
     height: 20,
     borderRadius: 23,
-    lineHeight: 45,
     textAlign: 'center',
     backgroundColor: '#2E7FFF'
   },

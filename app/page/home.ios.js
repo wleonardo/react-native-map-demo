@@ -35,7 +35,7 @@ import ScannerPage from './scanner.ios.js';
 
 import RecordPage from './record.ios.js';
 
-import Mycenter from './my-center.ios.js';
+import Mycenter from './my-center.js';
 
 import AnimateDemo from './animate-demo.js';
 
@@ -118,8 +118,8 @@ export default class Home extends Component {
   componentDidMount() {
     const { navigator } = this.props;
     firstTime = true;
-    this.getGeo.call(this);
-    this.watchGeo.call(this);
+    this.getGeo();
+    this.watchGeo();
   }
 
   toBike(bikeinfo) {
@@ -162,9 +162,9 @@ export default class Home extends Component {
     console.log(navigator.geolocation);
     navigator.geolocation.getCurrentPosition(
       (position) => {
-        this.refeshGeoLocation.call(this, position)
+        this.refeshGeoLocation(position)
       },
-      (error) => alert(error.message), { enableHighAccuracy: true, maximumAge: 0, distanceFilter: 1 }
+      (error) => alert(JSON.stringify(error)), { enableHighAccuracy: true, maximumAge: 0, distanceFilter: 1 }
     );
   }
 
@@ -294,12 +294,6 @@ export default class Home extends Component {
         title="当前位置"
         description="当前位置"
         ></MapView.Marker.Animated>
-
-      <MapView.Polyline
-        coordinates={this.state.directions}
-        strokeColor="rgba(0,0,200,0.3)"
-        strokeWidth={2}
-      ></MapView.Polyline>
       
       </MapView>
 
@@ -341,12 +335,12 @@ const styles = StyleSheet.create({
     backgroundColor: '#FF5A5F',
     height: 60,
     width: 160,
+    alignItems: 'center',
+    justifyContent: 'center',
     borderRadius: 30
   },
   scannerBtnText: {
     backgroundColor: 'transparent',
-    lineHeight: 60,
-    textAlign: 'center',
     color: '#fff',
     fontSize: 18
   },

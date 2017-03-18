@@ -30,7 +30,7 @@ export default class reactNativeDemo extends Component {
      <Navigator
       initialRoute={{ title: defaultName, component: defaultComponent }}
       configureScene={(route) => {
-        return Navigator.SceneConfigs.VerticalDownSwipeJump;
+        return Navigator.SceneConfigs.PushFromRight;
       }}
       renderScene={(route, navigator) => {
         let Component = route.component;

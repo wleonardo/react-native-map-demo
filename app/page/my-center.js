@@ -48,7 +48,7 @@ export default class Mycenter extends Component {
           </TouchableHighlight>
           <View style={styles.bikeWapper}>
             <View style={styles.bike}>
-              <Icon name="bike" size={30} color="#ff585d" style={{width: 100, lineHeight: 100, height: 100, backgroundColor: 'transparent', textAlign: 'center'}} />
+              <Icon name="bike" size={30} color="#ff585d" style={{width: 30, lineHeight: 30, height: 30, backgroundColor: 'transparent', textAlign: 'center'}} />
             </View>
           </View>
             <View style={styles.statistics}>
@@ -121,7 +121,9 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     width: 100,
     height: 100,
-    borderRadius: 50
+    borderRadius: 50,
+    alignItems: 'center',
+    justifyContent: 'center'
   },
   topPannel: {
     backgroundColor: '#ff585d',
@@ -171,12 +173,11 @@ const styles = StyleSheet.create({
     width: Dimensions.get('window').width,
     flexDirection: 'row',
     justifyContent: 'space-between',
+    alignItems: 'center',
     paddingLeft: 15,
     paddingRight: 15
   },
   listText: {
     color: '#606060',
-    lineHeight: 60,
-    height: 59
   }
 });
