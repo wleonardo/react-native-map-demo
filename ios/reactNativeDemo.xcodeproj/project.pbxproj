@@ -285,6 +285,7 @@
 		5E91572D1DD0AC6500FF2AA8 /* RCTAnimation.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTAnimation.xcodeproj; path = "../node_modules/react-native/Libraries/NativeAnimation/RCTAnimation.xcodeproj"; sourceTree = "<group>"; };
 		78C398B01ACF4ADC00677621 /* RCTLinking.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTLinking.xcodeproj; path = "../node_modules/react-native/Libraries/LinkingIOS/RCTLinking.xcodeproj"; sourceTree = "<group>"; };
 		832341B01AAA6A8300B99B32 /* RCTText.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTText.xcodeproj; path = "../node_modules/react-native/Libraries/Text/RCTText.xcodeproj"; sourceTree = "<group>"; };
+		A7249D5C1E7D226200B32B23 /* MyCustomModule.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MyCustomModule.h; sourceTree = "<group>"; };
 		A7A1CBCA1E67D76800B02A20 /* libreact-native-camera.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libreact-native-camera.a"; path = "../../../Library/Developer/Xcode/DerivedData/reactNativeDemo-delneqyqxdtguyhiipdsrdkidpzo/Build/Products/Debug-iphoneos/react-native-camera/libreact-native-camera.a"; sourceTree = "<group>"; };
 		A7E609B41E7001BE0037E427 /* AIRGMSMarker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AIRGMSMarker.h; sourceTree = "<group>"; };
 		A7E609B51E7001BE0037E427 /* AIRGMSMarker.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AIRGMSMarker.m; sourceTree = "<group>"; };
@@ -466,6 +467,7 @@
 				13B07FB61A68108700A75B9A /* Info.plist */,
 				13B07FB11A68108700A75B9A /* LaunchScreen.xib */,
 				13B07FB71A68108700A75B9A /* main.m */,
+				A7249D5C1E7D226200B32B23 /* MyCustomModule.h */,
 			);
 			name = reactNativeDemo;
 			sourceTree = "<group>";
@@ -1244,6 +1246,10 @@
 				);
 				INFOPLIST_FILE = reactNativeDemo/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+				);
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
@@ -1274,6 +1280,10 @@
 				);
 				INFOPLIST_FILE = reactNativeDemo/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+				);
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",

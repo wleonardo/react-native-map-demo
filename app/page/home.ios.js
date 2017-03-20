@@ -7,6 +7,7 @@
 import React, { Component, PropTypes } from 'react';
 
 import {
+  NativeModules,
   AppRegistry,
   StyleSheet,
   Text,
@@ -120,6 +121,8 @@ export default class Home extends Component {
     firstTime = true;
     this.getGeo();
     this.watchGeo();
+    console.log(NativeModules);
+    console.log(NativeModules.MyCustomModule);
   }
 
   toBike(bikeinfo) {
