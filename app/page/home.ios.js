@@ -40,6 +40,10 @@ import Mycenter from './my-center.js';
 
 import AnimateDemo from './animate-demo.js';
 
+import SideMenu  from '../component/side-menu/react-native-side-menu';
+
+const Menu = require('../component/side-menu/Menu');
+
 const LATITUDE = 37.78825;
 const LONGITUDE = -122.4324;
 const EARTH_RADIUS = 6378137;
@@ -258,7 +262,10 @@ export default class Home extends Component {
   }
 
   render() {
+    const menu = <Menu navigator={navigator}/>;
+    console.log(menu);
     return (
+       <SideMenu menu={menu}>
       <View style={styles.containerMain}>
       <StatusBar
       backgroundColor="blue"
@@ -310,6 +317,7 @@ export default class Home extends Component {
         </View>
       </TouchableOpacity>
       </View>
+      </SideMenu>
     );
   }
 }
