@@ -117,7 +117,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center'
   },
   bike: {
-    textAlign: 'center',
     backgroundColor: '#fff',
     width: 100,
     height: 100,

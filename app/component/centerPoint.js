@@ -5,61 +5,56 @@ import {
   Text,
 } from 'react-native';
 
-const propTypes = {
-  amount: PropTypes.number.isRequired
-};
+const propTypes = {};
 
-class SelfMarker extends React.Component {
+class CenterMarker extends React.Component {
   render() {
-    const { amount } = this.props;
     return (
       <View style={styles.container}>
         <View style={styles.bubble}>
-          <View style={[styles.amount]}></View>
+          <Text style={[styles.amount]}>附近单车</Text>
         </View>
+        <View style={styles.arrowBorder} />
+        <View style={styles.arrow} />
+        <View style={styles.pos} />
       </View>
     );
   }
 }
 
-SelfMarker.propTypes = propTypes;
+CenterMarker.propTypes = propTypes;
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: 'transparent',
-    justifyContent: 'flex-end',
     flexDirection: 'column',
-    width: 30,
-    height: 30
+    justifyContent: 'center'
   },
   bubble: {
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    width: 30,
+    width: 80,
     height: 30,
-    backgroundColor: '#fff',
+    backgroundColor: '#2D2E36',
     padding: 2,
-    borderRadius: 25,
-    borderColor: '#fff',
+    borderRadius: 15,
+    borderColor: '#2D2E36',
     borderWidth: 0.5,
   },
-  amount: {
-    width: 20,
-    height: 20,
-    borderRadius: 23,
-    backgroundColor: '#2E7FFF'
-  },
-
   dollar: {
     color: '#FFFFFF',
     fontSize: 10,
+  },
+  amount: {
+    color: '#FFFFFF',
+    fontSize: 13,
+    backgroundColor: 'transparent'
   },
   arrow: {
     backgroundColor: 'transparent',
     borderWidth: 4,
     borderColor: 'transparent',
-    borderTopColor: '#FF5A5F',
+    borderTopColor: '#2D2E36',
     alignSelf: 'center',
     marginTop: -9,
   },
@@ -67,10 +62,23 @@ const styles = StyleSheet.create({
     backgroundColor: 'transparent',
     borderWidth: 4,
     borderColor: 'transparent',
-    borderTopColor: '#D23F44',
+    borderTopColor: '#2D2E36',
     alignSelf: 'center',
     marginTop: -0.5,
   },
+  pos: {
+    height: 10,
+    width: 2,
+    marginTop: -4,
+    alignSelf: 'center',
+    backgroundColor: '#2D2E36',
+    shadowColor: '#000',
+    shadowOpacity: 0.2,
+    shadowOffset: {
+      width: 0,
+      height: 6,
+    }
+  }
 });
 
-module.exports = SelfMarker;
+module.exports = CenterMarker;

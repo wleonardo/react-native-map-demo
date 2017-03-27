@@ -58,9 +58,9 @@ module.exports = class Menu extends Component {
         </View>
 
         <Text
-          onPress={() => this.props.onItemSelected('About')}
+          onPress={() => this.props.onItemSelected('slider-view')}
           style={styles.item}>
-          About
+          "slider-view"
         </Text>
 
         <Text

@@ -3,20 +3,18 @@ import {
   StyleSheet,
   View,
   Text,
+  Image
 } from 'react-native';
 
-const propTypes = {
-  amount: PropTypes.number.isRequired
-};
+const propTypes = {};
 
 
 class BikeMarker extends React.Component {
   render() {
-    const { amount } = this.props;
     return (
       <View style={styles.container}>
         <View style={styles.bubble}>
-          <Text style={[styles.amount]}>{amount}</Text>
+          <Image style={styles.amount} source={require('../lib/img/bike.png')} resizeMode="contain" />
         </View>
         <View style={styles.arrowBorder} />
         <View style={styles.arrow} />
@@ -37,7 +35,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     width: 30,
     height: 30,
-    alignSelf: 'flex-start',
+    alignItems: 'center',
     backgroundColor: '#FF5A5F',
     padding: 2,
     borderRadius: 15,
@@ -49,13 +47,9 @@ const styles = StyleSheet.create({
     fontSize: 10,
   },
   amount: {
-    color: '#FFFFFF',
-    fontSize: 13,
-    width: 26,
-    height: 26,
+    width: 23,
+    height: 23,
     borderRadius: 13,
-    lineHeight: 25,
-    textAlign: 'center',
     backgroundColor: 'transparent'
   },
   arrow: {

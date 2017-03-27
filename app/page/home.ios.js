@@ -28,9 +28,13 @@ import MapView, { PROVIDER_GOOGLE } from 'react-native-maps';
 
 import BikeMarker from '../component/BikeMarker.js';
 
+import CenterPoint from '../component/centerPoint.js';
+
 import SelfMarker from '../component/selfMarker.js';
 
 import PositionButton from '../component/PositionButton.js';
+
+import TipTool from '../component/tipTool.js';
 
 import ScannerPage from './scanner.ios.js';
 
@@ -40,7 +44,9 @@ import Mycenter from './my-center.js';
 
 import AnimateDemo from './animate-demo.js';
 
-import SideMenu  from '../component/side-menu/react-native-side-menu';
+import ScrollView from './scroll-view.js';
+
+import SideMenu from '../component/side-menu/react-native-side-menu';
 
 const Menu = require('../component/side-menu/Menu');
 
@@ -241,7 +247,6 @@ export default class Home extends Component {
 
   gotoMyCenter() {
     const { navigator } = this.props;
-
     if (navigator) {
       navigator.push({
         name: 'Mycenter',
@@ -261,63 +266,75 @@ export default class Home extends Component {
     }
   }
 
+  gotoScrollView() {
+    const { navigator } = this.props;
+
+    if (navigator) {
+      navigator.push({
+        name: 'ScrollView',
+        component: ScrollView
+      });
+    }
+  }
+
   render() {
-    const menu = <Menu navigator={navigator}/>;
-    console.log(menu);
+    // const menu = <Menu navigator={navigator}/>;
+    // console.log(menu);
     return (
-       <SideMenu menu={menu}>
       <View style={styles.containerMain}>
-      <StatusBar
-      backgroundColor="blue"
-      barStyle="default" ></StatusBar>
+        <StatusBar
+        backgroundColor="blue"
+        barStyle="default" ></StatusBar>
 
-
-      <View style={styles.navigator}>  
-        <Text style={{textAlign: 'center', color: '#FF5A5F', fontSize: 18, fontWeight: '500'}}>{ this.state.title }</Text>
-        <TouchableHighlight onPress={this.gotoMyCenter.bind(this)} style={{position: 'absolute', left: 15, top: 5}}>
-          <Icon name="account" size={30} color="#c0c0c0" />
-        </TouchableHighlight>
-        <TouchableHighlight onPress={this.gotoAnimateDemo.bind(this)} style={{position: 'absolute', right: 15, top: 5}}>
-          <Icon name="candycane" size={30} color="#c0c0c0" />
-        </TouchableHighlight>
-        
-      </View>
-      <MapView style={styles.map}
-        region={this.state.region}
-        provider={PROVIDER_GOOGLE}
-        onRegionChange={this.onRegionChange.bind(this)}
-      >
-      {this.state.bikes.map(bike => (
-          <MapView.Marker.Animated onPress={this.toBike.call(this, bike)} coordinate={bike.coordinate} title="可用" description={'车辆距您'+ bike.distance + '米'} >
-            <BikeMarker amount={1} />
-          </MapView.Marker.Animated>
-      ))}
-
-
-      <MapView.Marker.Animated 
-      coordinate={this.state.coordinate} >
-          <SelfMarker amount={99} />
-      </MapView.Marker.Animated>
-
-      <MapView.Marker.Animated
-        coordinate={this.state.region}
-        title="当前位置"
-        description="当前位置"
-        ></MapView.Marker.Animated>
-      
-      </MapView>
-
-      <TouchableOpacity onPress={this.barcodeSanner.bind(this)} style={styles.scannerBtn}>
-          <Text style={styles.scannerBtnText}>扫描</Text>
-      </TouchableOpacity>
-
-      <TouchableOpacity  onPress={this.getBackToPosition.bind(this)} style={styles.positionBtn}>
-        <View  style={styles.positionBtnIner}>
-          <View style={styles.positionBtnInerpoint}></View>
+        <View style={styles.navigator}>  
+          <Text style={{textAlign: 'center', color: '#FF5A5F', fontSize: 18, fontWeight: '500'}}>{ this.state.title }</Text>
+          <TouchableHighlight onPress={this.gotoMyCenter.bind(this)} style={{position: 'absolute', left: 15, top: 5}}>
+            <Icon name="account" size={30} color="#c0c0c0" />
+          </TouchableHighlight>
+          <TouchableHighlight onPress={this.gotoScrollView.bind(this)} style={{position: 'absolute', right: 50, top: 5}}>
+            <Icon name="access-point" size={30} color="#c0c0c0" />
+          </TouchableHighlight>
+          <TouchableHighlight onPress={this.gotoAnimateDemo.bind(this)} style={{position: 'absolute', right: 15, top: 5}}>
+            <Icon name="candycane" size={30} color="#c0c0c0" />
+          </TouchableHighlight>
+          
         </View>
-      </TouchableOpacity>
-      </View>
-      </SideMenu>
+        <MapView style={styles.map}
+          region={this.state.region}
+          provider={PROVIDER_GOOGLE}
+          onRegionChange={this.onRegionChange.bind(this)}
+        >
+        {this.state.bikes.map((bike, key) => (
+            <MapView.Marker.Animated key={key} onPress={this.toBike.call(this, bike)} coordinate={bike.coordinate} title="可用" description={'车辆距您'+ bike.distance + '米'} >
+              <BikeMarker />
+            </MapView.Marker.Animated>
+        ))}
+
+
+        <MapView.Marker.Animated 
+        coordinate={this.state.coordinate}>
+            <SelfMarker amount={99} />
+        </MapView.Marker.Animated>
+
+        </MapView>
+
+        <TipTool></TipTool>
+
+        <TouchableOpacity  onPress={this.getBackToPosition.bind(this)} style={styles.centerPoint}>
+          <CenterPoint style={styles.centerPoint}></CenterPoint>
+        </TouchableOpacity>
+        
+
+        <TouchableOpacity onPress={this.barcodeSanner.bind(this)} style={styles.scannerBtn}>
+            <Text style={styles.scannerBtnText}>扫描</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity  onPress={this.getBackToPosition.bind(this)} style={styles.positionBtn}>
+          <View  style={styles.positionBtnIner}>
+            <View style={styles.positionBtnInerpoint}></View>
+          </View>
+        </TouchableOpacity>
+        </View>
     );
   }
 }
@@ -336,6 +353,12 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     paddingTop: 10
+  },
+  centerPoint: {
+    position: 'absolute',
+    top: 30,
+    left: Dimensions.get('window').width / 2 - 40,
+    top: Dimensions.get('window').height / 2 - 20
   },
   scannerBtn: {
     position: 'absolute',
@@ -375,13 +398,9 @@ const styles = StyleSheet.create({
     position: 'absolute'
   },
   positionBtnIner: {
-    color: '#FFFFFF',
-    fontSize: 13,
     width: 20,
     height: 20,
     borderRadius: 23,
-    lineHeight: 45,
-    textAlign: 'center',
     borderColor: '#626262',
     borderWidth: 1,
     backgroundColor: 'transparent',
